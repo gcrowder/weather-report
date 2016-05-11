@@ -1,0 +1,8 @@
+secrets.py
+.envrc
+.direnv
+__pycache__
+*.pyc
+.DS_Store
+92651.pickle
+weather.json
