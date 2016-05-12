@@ -10,6 +10,7 @@ from secrets import SECRET_TOKEN
 
 
 def validate_zip_code(weather):
+    """ Validate zip code by testing whether location key exists in weather."""
     try:
         weather_zip = weather['location']['zip']
     except KeyError:
