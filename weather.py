@@ -2,13 +2,19 @@ import requests
 import sys
 import os
 import pickle
-# import argparse
+import datetime
+import argparse
 from weather_lib import Location, Hurricane, Condition
 from weather_lib import Forecast, Astronomy, Alert
 from secrets import SECRET_TOKEN
 
 
-zip_code = 92651
+def is_fresh(zip_code):
+    file_mod_time = datetime.datetime.fromtimestamp(
+        os.stat('{}.pickle'.format(zip_code)).st_mtime)
+    now = datetime.datetime.today()
+    max_delta = datetime.timedelta(minutes=30)
+    return now-file_mod_time < max_delta
 
 
 def pickle_weather_data(weather_data):
@@ -34,30 +40,84 @@ def get_weather_data(zip_code):
 
 
 def load_or_request_data(zip_code):
-    if os.path.isfile('92651.pickle'):
-        with open('92651.pickle', 'rb') as f:
+    if os.path.isfile('{}.pickle'.format(zip_code)):
+        with open('{}.pickle'.format(zip_code), 'rb') as f:
             data = pickle.load(f)
         if data['location']['zip'] == zip_code:
-            return data
+            if is_fresh(zip_code):
+                return data
+            else:
+                data = get_weather_data(zip_code)
+                pickle_weather_data(data)
+                return data
         else:
-            return get_weather_data(zip_code)
+            data = get_weather_data(zip_code)
+            pickle_weather_data(data)
+            return data
     else:
-        return get_weather_data(zip_code)
+        data = get_weather_data(zip_code)
+        pickle_weather_data(data)
+        return data
 
 
-def main():
-    weather = load_or_request_data(92651)
-    print(weather.keys())
-    location = Location(**weather['location'])
-    print(location)
+def get_location(weather):
+    return Location(**weather['location'])
+
+
+def get_alerts(weather):
+    if weather['alerts']:
+        return [Alert(**alert) for alert in weather['alerts']]
+    else:
+        return []
+
+
+def get_astronomy(weather):
+    return Astronomy(**weather['sun_phase'])
+
+
+def get_condition(weather):
+    return Condition(**weather['current_observation'])
+
+
+def get_forecast(weather):
+    if weather['forecast']['txt_forecast']['forecastday']:
+        forecast = {'date': weather['forecast']['txt_forecast']['date']}
+        forecast['list'] = [Forecast(**forecast) for forecast in weather['forecast']['txt_forecast']['forecastday']]
+        return forecast
+    else:
+        return []
+
+def get_hurricanes(weather):
     if weather['currenthurricane']:
         hurricanes = [Hurricane(**hurricane) for hurricane in weather['currenthurricane']]
-        print(hurricanes)
-    if weather['alerts']:
-        alerts = [Alert(**alert) for alert in weather['alerts']]
-        print(alerts)
-    astronomy = Astronomy(**weather['sun_phase'])
+        return hurricanes
+    else:
+        return []
+
+
+def print_weather(location, alerts, astronomy, condition, forcast, hurricanes):
+    os.system('clear')
+def main(zip_code):
+    weather = load_or_request_data(zip_code)
+    location = get_location(weather)
+    print(location)
+    alerts = get_alerts(weather)
+    print(alerts)
+    astronomy = get_astronomy(weather)
     print(astronomy)
+    condition = get_condition(weather)
+    print(condition)
+    forecast = get_forecast(weather)
+    print(forecast['date'])
+    for entry in forecast['list']:
+        print(entry)
+    hurricanes = get_hurricane(weather)
+    print(hurricanes)
+
 
 if __name__ == '__main__':
-    main()
+    parser = argparse.ArgumentParser(description='Lookup weather.')
+    parser.add_argument('zip_code', type=str, nargs='?', default='92651',
+                        help='A 5 digit zip code to find weather data.')
+    args = parser.parse_args()
+    main(args.zip_code)

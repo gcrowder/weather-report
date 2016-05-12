@@ -47,16 +47,19 @@ class Condition:
         self.temperature = kwargs['temperature_string']
         self.humidity = kwargs['relative_humidity']
 
+    def __str__(self):
+        return "Weather: {}\nTemperature: {}\nHumidity: {}".format(
+                        self.weather, self.temperature, self.humidity)
+
 
 class Forecast:
 
-    def __init(self, **kwargs):
-        self.forecast_list = kwargs['forecastday']
-        self.date = kwargs['date']
+    def __init__(self, **kwargs):
+        self.title = kwargs['title']
+        self.text = kwargs['fcttext']
 
     def __str__(self):
-        return "{} period Forecast at {}".format(len(self.forecast_list),
-                                                 self.date)
+        return "{}\n{}".format(self.title, self.text)
 
 
 class Astronomy:
