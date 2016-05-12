@@ -1,13 +1,29 @@
-class Location:
+class Alert:
 
-    def __init__(self, location):
-        self.city = location['city']
-        self.state = location['state']
-        self.country_name = location['country_name']
-        self.zip = location['zip']
+    def __init__(self, **kwargs):
+        self.type = kwargs['type']
+        self.date = kwargs['date']
+        self.description = kwargs['description']
+        self.message = kwargs['message']
 
     def __str__(self):
-        return "Zip Code {zip}: is in {city}, {state} {country_name}".format(
+        return "{type}: {description} {date}\n{message}".format(
+                                                type=self.type,
+                                                date=self.date,
+                                                description=self.description,
+                                                message=self.message)
+
+
+class Location:
+
+    def __init__(self, **kwargs):
+        self.city = kwargs['city']
+        self.state = kwargs['state']
+        self.country_name = kwargs['country_name']
+        self.zip = kwargs['zip']
+
+    def __str__(self):
+        return "Zip Code {zip} is in {city}, {state} {country_name}".format(
                                                 city=self.city,
                                                 state=self.state,
                                                 country_name=self.country_name,
@@ -16,27 +32,27 @@ class Location:
 
 class Hurricane:
 
-    def __init__(self, stormInfo):
-        self.name = stormInfo["stormName_Nice"]
-        self.number = stormInfo["stormNumber"]
+    def __init__(self, **kwargs):
+        self.name = kwargs["stormName_Nice"]
+        self.number = kwargs["stormNumber"]
 
     def __str__(self):
         return "{} {}".format(self.name, self.number)
 
 
-class Conditions:
+class Condition:
 
-    def __init__(self, estimated):
-        self.weather = estimated['weather']
-        self.temperature = estimated['temperature_string']
-        self.humidity = estimated['relative_humidity']
+    def __init__(self, **kwargs):
+        self.weather = kwargs['weather']
+        self.temperature = kwargs['temperature_string']
+        self.humidity = kwargs['relative_humidity']
 
 
 class Forecast:
 
-    def __init(self, txt_forecast):
-        self.forecast_list = txt_forecast['forecastday']
-        self.date = txt_forecast['date']
+    def __init(self, **kwargs):
+        self.forecast_list = kwargs['forecastday']
+        self.date = kwargs['date']
 
     def __str__(self):
         return "{} period Forecast at {}".format(len(self.forecast_list),
@@ -45,6 +61,11 @@ class Forecast:
 
 class Astronomy:
 
-    def __init__(self, sunrise, sunset):
-        self.sunsrise = "{}:{}".format(sunrise['hour'], sunrise['minute'])
-        self.sunset = "{}:{}".format(sunset['hour'], sunset['minute'])
+    def __init__(self, **kwargs):
+        self.sunrise = "{}:{}".format(kwargs['sunrise']['hour'],
+                                      kwargs['sunrise']['minute'])
+        self.sunset = "{}:{}".format(kwargs['sunset']['hour'],
+                                     kwargs['sunset']['minute'])
+
+    def __str__(self):
+        return "Sunrise: {} Sunset: {}".format(self.sunrise, self.sunset)
