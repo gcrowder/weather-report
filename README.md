@@ -1,5 +1,5 @@
 # weather-report
-This python3 script uses the Weather Underground API to retrieve weather data for a given zip code and print that data to the command line screen.
+This python3 script uses the requests module and the Weather Underground API to retrieve weather data for a given zip code and print that data to the command line screen.
 ## Setup:
 1. Clone this git repository.
 2. Run `pip install -r requirements.txt` to install the requests module.
