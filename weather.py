@@ -10,6 +10,7 @@ from secrets import SECRET_TOKEN
 
 
 def is_fresh(zip_code):
+    """Check to see if weather data is recent (<30 min old)."""
     file_mod_time = datetime.datetime.fromtimestamp(
         os.stat('{}.pickle'.format(zip_code)).st_mtime)
     now = datetime.datetime.today()
@@ -18,12 +19,14 @@ def is_fresh(zip_code):
 
 
 def pickle_weather_data(weather_data):
+    """ Serialize weather data to disk to prevent repeated API calls."""
     with open('{}.pickle'.format(weather_data['location']['zip']), 'wb') as f:
         pickle.dump(weather_data, f, pickle.HIGHEST_PROTOCOL)
 
 
 def get_weather_data(zip_code):
-    features = ['astronomy', 'forecast', 'geolookup',
+    """ Request weather data with given features and return JSON-ified data."""
+    features = ['astronomy', 'forecast10day', 'geolookup',
                 'conditions', 'currenthurricane', 'alerts']
     feature_string = "{}/{}/{}/{}/{}/{}".format(*features)
     url = "http://api.wunderground.com/api/{}/{}/q/{}.json".format(
@@ -40,6 +43,8 @@ def get_weather_data(zip_code):
 
 
 def load_or_request_data(zip_code):
+    """ Load appropriate pickle and check freshness. Else download data.
+        Returns JSON format weather data. """
     if os.path.isfile('{}.pickle'.format(zip_code)):
         with open('{}.pickle'.format(zip_code), 'rb') as f:
             data = pickle.load(f)
@@ -61,10 +66,13 @@ def load_or_request_data(zip_code):
 
 
 def get_location(weather):
+    """Return a Location object from the JSON weather data."""
     return Location(**weather['location'])
 
 
 def get_alerts(weather):
+    """ Check to see if JSON weather data has any alerts.
+        Depending on result, return list of Alert objects or empty list. """
     if weather['alerts']:
         return [Alert(**alert) for alert in weather['alerts']]
     else:
@@ -72,31 +80,43 @@ def get_alerts(weather):
 
 
 def get_astronomy(weather):
+    """Return an Astronomy object from the JSON weather data."""
     return Astronomy(**weather['sun_phase'])
 
 
 def get_condition(weather):
+    """Return a Condition object from the JSON weather data."""
     return Condition(**weather['current_observation'])
 
 
 def get_forecast(weather):
+    """ Check to see if JSON weather data has any forecasts.
+        Depending on result, return list of Forecast objects or empty list. """
     if weather['forecast']['txt_forecast']['forecastday']:
         forecast = {'date': weather['forecast']['txt_forecast']['date']}
-        forecast['list'] = [Forecast(**forecast) for forecast in weather['forecast']['txt_forecast']['forecastday']]
+        forecast['list'] = [Forecast(**forecast)
+                            for forecast in
+                            weather['forecast']['txt_forecast']['forecastday']]
         return forecast
     else:
         return []
 
 
 def get_hurricanes(weather):
+    """ Check to see if JSON weather data has any hurricanes.
+        Depending on result, return list of Hurricane objects or empty list."""
     if weather['currenthurricane']:
-        hurricanes = [Hurricane(**hurricane) for hurricane in weather['currenthurricane']]
+        hurricanes = [Hurricane(**hurricane)
+                      for hurricane
+                      in weather['currenthurricane']]
         return hurricanes
     else:
         return []
 
 
-def print_weather(location, alerts, astronomy, condition, forecast, hurricanes):
+def print_weather(location, alerts, astronomy,
+                  condition, forecast, hurricanes):
+    """ Clear the screen and print applicable feature objects. """
     os.system('clear')
     print(location)
     if alerts:

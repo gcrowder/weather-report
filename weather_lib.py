@@ -1,5 +1,5 @@
 class Alert:
-
+    """ Alert object takes in an alert dictionary from JSON weather data."""
     def __init__(self, **kwargs):
         self.type = kwargs['type']
         self.date = kwargs['date']
@@ -15,7 +15,7 @@ class Alert:
 
 
 class Location:
-
+    """ Location objects takes a location dict from the JSON weather data."""
     def __init__(self, **kwargs):
         self.city = kwargs['city']
         self.state = kwargs['state']
@@ -31,7 +31,7 @@ class Location:
 
 
 class Hurricane:
-
+    """ Hurricane object takes a hurricane dict from the JSON weather data."""
     def __init__(self, **kwargs):
         self.name = kwargs["stormName_Nice"]
         self.number = kwargs["stormNumber"]
@@ -41,7 +41,7 @@ class Hurricane:
 
 
 class Condition:
-
+    """ Condition takes a weather conditions dict from the JSON data."""
     def __init__(self, **kwargs):
         self.weather = kwargs['weather']
         self.temperature = kwargs['temperature_string']
@@ -53,7 +53,7 @@ class Condition:
 
 
 class Forecast:
-
+    """ Forecast takes a forecast dict from the JSON weather data."""
     def __init__(self, **kwargs):
         self.title = kwargs['title']
         self.text = kwargs['fcttext']
@@ -63,7 +63,7 @@ class Forecast:
 
 
 class Astronomy:
-
+    """ Astronomy takes a sun_phase dict from the JSON weather data."""
     def __init__(self, **kwargs):
         self.sunrise = "{}:{}".format(kwargs['sunrise']['hour'],
                                       kwargs['sunrise']['minute'])
