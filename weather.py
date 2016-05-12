@@ -87,6 +87,7 @@ def get_forecast(weather):
     else:
         return []
 
+
 def get_hurricanes(weather):
     if weather['currenthurricane']:
         hurricanes = [Hurricane(**hurricane) for hurricane in weather['currenthurricane']]
@@ -99,7 +100,8 @@ def print_weather(location, alerts, astronomy, condition, forecast, hurricanes):
     os.system('clear')
     print(location)
     if alerts:
-        print(alerts)
+        for alert in alerts:
+            print(alert)
     print(astronomy)
     print(condition)
     if forecast:
@@ -107,7 +109,8 @@ def print_weather(location, alerts, astronomy, condition, forecast, hurricanes):
         for entry in forecast['list']:
             print(entry)
     if hurricanes:
-        print(hurricanes)
+        for hurricane in hurricanes:
+            print(hurricane)
 
 
 def main(zip_code):
