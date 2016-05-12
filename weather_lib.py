@@ -59,7 +59,7 @@ class Forecast:
         self.text = kwargs['fcttext']
 
     def __str__(self):
-        return "{}\n{}".format(self.title, self.text)
+        return "{}:\n{}\n".format(self.title, self.text)
 
 
 class Astronomy:
