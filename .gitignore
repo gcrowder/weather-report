@@ -4,6 +4,5 @@ secrets.py
 __pycache__
 *.pyc
 .DS_Store
-92651.pickle
 weather.json
-27713.pickle 92651.pickle
+*.pickle
