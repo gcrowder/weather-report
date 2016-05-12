@@ -8,3 +8,5 @@ This python3 script uses the Weather Underground API to retrieve weather data fo
 
 ## Persistence
 To save bandwidth (for yourself and the lovely folks at Weather Underground), the data retrieved will be saved as a pickle named `zip_code.pickle`, again where `zip_code` is the number passed to weather.py. If weather.py doesn't find an appropriate pickle or the pickle is stale (older than 30 minutes), weather.py will request the data from Weather Underground.
+
+![https://www.wunderground.com/?apiref=ad8d52019104ddef](https://icons.wxug.com/logos/PNG/wundergroundLogo_4c_horz.png "https://www.wunderground.com/?apiref=ad8d52019104ddef")
