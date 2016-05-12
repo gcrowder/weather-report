@@ -9,8 +9,17 @@ from weather_lib import Forecast, Astronomy, Alert
 from secrets import SECRET_TOKEN
 
 
+def validate_zip_code(weather):
+    try:
+        weather_zip = weather['location']['zip']
+    except KeyError:
+        print("That's not a real zip code. Check your digits and try again.")
+        sys.exit(1)
+    return weather_zip
+
+
 def is_fresh(zip_code):
-    """Check to see if weather data is recent (<30 min old)."""
+    """Check to see if pickled weather data is recent (<30 min old)."""
     file_mod_time = datetime.datetime.fromtimestamp(
         os.stat('{}.pickle'.format(zip_code)).st_mtime)
     now = datetime.datetime.today()
@@ -18,10 +27,10 @@ def is_fresh(zip_code):
     return now-file_mod_time < max_delta
 
 
-def pickle_weather_data(weather_data):
+def pickle_weather_data(weather):
     """ Serialize weather data to disk to prevent repeated API calls."""
-    with open('{}.pickle'.format(weather_data['location']['zip']), 'wb') as f:
-        pickle.dump(weather_data, f, pickle.HIGHEST_PROTOCOL)
+    with open('{}.pickle'.format(weather['location']['zip']), 'wb') as f:
+        pickle.dump(weather, f, pickle.HIGHEST_PROTOCOL)
 
 
 def get_weather_data(zip_code):
@@ -61,13 +70,19 @@ def load_or_request_data(zip_code):
             return data
     else:
         data = get_weather_data(zip_code)
+        validate_zip_code(data)
         pickle_weather_data(data)
         return data
 
 
 def get_location(weather):
     """Return a Location object from the JSON weather data."""
-    return Location(**weather['location'])
+    try:
+        location = Location(**weather['location'])
+    except KeyError:
+        print("That's not a real zip code. Check your digits and try again.")
+        sys.exit(1)
+    return location
 
 
 def get_alerts(weather):
