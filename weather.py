@@ -95,25 +95,34 @@ def get_hurricanes(weather):
         return []
 
 
-def print_weather(location, alerts, astronomy, condition, forcast, hurricanes):
+def print_weather(location, alerts, astronomy, condition, forecast, hurricanes):
     os.system('clear')
-def main(zip_code):
-    weather = load_or_request_data(zip_code)
-    location = get_location(weather)
     print(location)
-    alerts = get_alerts(weather)
-    print(alerts)
-    astronomy = get_astronomy(weather)
+    if alerts:
+        print(alerts)
     print(astronomy)
-    condition = get_condition(weather)
     print(condition)
-    forecast = get_forecast(weather)
-    print(forecast['date'])
-    for entry in forecast['list']:
-        print(entry)
-    hurricanes = get_hurricane(weather)
-    print(hurricanes)
+    if forecast:
+        print(forecast['date'])
+        for entry in forecast['list']:
+            print(entry)
+    if hurricanes:
+        print(hurricanes)
 
+
+def main(zip_code):
+    if len(zip_code) == 5 and zip_code.isdigit():
+        weather = load_or_request_data(zip_code)
+        location = get_location(weather)
+        alerts = get_alerts(weather)
+        astronomy = get_astronomy(weather)
+        condition = get_condition(weather)
+        forecast = get_forecast(weather)
+        hurricanes = get_hurricanes(weather)
+        print_weather(location, alerts, astronomy,
+                      condition, forecast, hurricanes)
+    else:
+        print("That's not a zip code! Try again.")
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Lookup weather.')
